@@ -252,7 +252,8 @@ inputs:
     secondaryFiles: .fai
     inputBinding:
       position: 11
-      valueFrom: $(self ? self.path : "")
+      valueFrom: |
+        ${ return self ? self.path : ""; }
     doc: >-
       Optional indexed reference FASTA (.fa + .fai). When provided, the
       sequence of each enhancer is extracted and added to the TSV output,

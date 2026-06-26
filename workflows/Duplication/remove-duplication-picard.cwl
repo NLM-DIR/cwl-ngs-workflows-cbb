@@ -86,10 +86,11 @@ steps:
             // ENCODE-style default for ATAC-seq is typically MAPQ>=20.
             // For ChIP-seq, keep the existing conservative default (30),
             // unless the user overrides via the workflow input.
+            var rq = inputs.readsquality !== null ? inputs.readsquality : 30;
             if (inputs.assay_type === "atacseq") {
-              return Math.min(inputs.readsquality ?? 30, 20) === 20 ? 20 : inputs.readsquality;
+              return Math.min(rq, 20) === 20 ? 20 : rq;
             }
-            return inputs.readsquality ?? 30;
+            return rq;
           }
       readswithbits:
         valueFrom: |
