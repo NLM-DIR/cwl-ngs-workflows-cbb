@@ -1,0 +1,7 @@
+class: SoftwareRequirement
+packages:
+  - package: 'bioconductor-basicstarrseq'
+    version:
+      - '1.38.0'
+    specs:
+      - https://anaconda.org/bioconda/bioconductor-basicstarrseq

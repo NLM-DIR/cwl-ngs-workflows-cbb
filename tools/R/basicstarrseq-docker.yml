@@ -1,0 +1,2 @@
+class: DockerRequirement
+dockerPull: quay.io/biocontainers/bioconductor-basicstarrseq:1.38.0--r45hdfd78af_0

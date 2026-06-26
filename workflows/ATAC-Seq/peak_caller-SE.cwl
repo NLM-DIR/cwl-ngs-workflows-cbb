@@ -75,7 +75,7 @@ steps:
         source: input_bam
     out:
       - id: report
-    run: ../../tools/R/ChIPQC.cwl
+    run: ../../tools/R/chipqc.cwl
     label: ChIPQC
   - id: homer_annotate_peaks
     in:
@@ -205,11 +205,3 @@ steps:
     run: ../../tools/R/readQC.cwl
     label: readQC
 requirements: []
-$schemas:
-  - 'https://schema.org/version/latest/schemaorg-current-http.rdf'
-'s:author':
-  - class: 's:Person'
-    's:email': 'mailto:r78v10a07@gmail.com'
-    's:identifier': 'https://orcid.org/0000-0002-4108-5982'
-    's:name': Roberto Vera Alvarez
-'s:license': 'https://spdx.org/licenses/OPL-1.0'

@@ -1,0 +1,2 @@
+class: DockerRequirement
+dockerPull: quay.io/biocontainers/cutadapt:5.2--py311haab0aaa_0

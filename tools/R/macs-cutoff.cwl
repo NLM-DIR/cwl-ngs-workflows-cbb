@@ -18,7 +18,13 @@ requirements:
       - entryname: MACScutoff.R
         entry: |
           args = commandArgs(trailingOnly=TRUE)
-          library(ggplot2)
+          if (!require("ggplot2", quietly = TRUE)) {
+            message("ggplot2 not found. Installing...")
+            install.packages("ggplot2", repos = "https://cloud.r-project.org")
+          }
+          suppressPackageStartupMessages({
+            library(ggplot2)
+          })
           peak_cutoff_file = args[1]
           out_pdf = args[2]
           out_inflection = args[3]
@@ -69,16 +75,4 @@ outputs:
     outputBinding:
       glob: $(inputs.out_inflection_name)
 
-baseCommand: ["Rscript", "MACScutoff.R"]
-
-$namespaces:
-  s: http://schema.org/
-
-s:author:
-  - class: s:Person
-    s:identifier: https://orcid.org/0000-0002-4108-5982
-    s:email: mailto:r78v10a07@gmail.com
-    s:name: Roberto Vera Alvarez
-
-$schemas:
-  - https://schema.org/version/latest/schemaorg-current-http.rdf
+baseCommand: ["Rscript", "--vanilla", "MACScutoff.R"]

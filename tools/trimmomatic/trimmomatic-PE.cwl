@@ -329,18 +329,3 @@ outputs:
 baseCommand:
   - trimmomatic
   - PE
-
-$namespaces:
-  edam: 'http://edamontology.org/'
-  s: 'http://schema.org/'
-
-$schemas:
-  - 'http://edamontology.org/EDAM_1.16.owl'
-  - 'https://schema.org/version/latest/schemaorg-current-http.rdf'
-'s:author':
-  - class: 's:Person'
-    's:email': 'mailto:r78v10a07@gmail.com'
-    's:identifier': 'https://orcid.org/0000-0002-4108-5982'
-    's:name': Roberto Vera Alvarez
-'s:codeRepository': 'https://github.com/alexdobin/STAR'
-'s:license': 'https://spdx.org/licenses/OPL-1.0'

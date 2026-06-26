@@ -14,15 +14,18 @@ requirements:
   ScatterFeatureRequirement: {}
 
 inputs:
+  R: string
   reads: File[]
   genome_fasta:
     type: File
     secondaryFiles: [.fai, ^.dict]
   genome_index: Directory
   genome_prefix: string
-  total_threads: int
+  threads: int
+  ploidy: int?
   java_options: string?
-  haplotype_threads: int
+  annotations: string[]?
+  missing_values_evaluate_as_failing: string?
   snp_filters:
     type: {"type": "array", "items": {"type": "array", "items": "string"}}
   indel_filters:
@@ -45,6 +48,7 @@ outputs:
   gvcf_file:
     outputSource: gatk_haplotypecaller_recal/output
     type: File
+    secondaryFiles: [ .tbi ]
   baserecalibrator_table:
     outputSource: gatk_baserecalibrator_post/output
     type: File
@@ -53,10 +57,11 @@ steps:
   alignment:
     run: bwa-alignment-sort.cwl
     in:
+      R: R
       reads: reads
       genome_index: genome_index
       genome_prefix: genome_prefix
-      threads: total_threads
+      threads: threads
     out: [sorted_indexed_bam, bam_flagstat_out, bam_stats_out]
   mark_duplicates:
     run: ../../tools/gatk/gatk-MarkDuplicates.cwl
@@ -84,10 +89,12 @@ steps:
   gatk_haplotypecaller_pre:
     run: ../../tools/gatk/gatk-HaplotypeCaller.cwl
     in:
-      threads: haplotype_threads
+      threads: threads
       R: genome_fasta
       I: index_split_bam/output
       java_options: java_options
+      ploidy: ploidy
+      annotations: annotations
       O:
         valueFrom: ${ return inputs.I.nameroot + "_raw_variants.vcf"; }
     out: [output]
@@ -123,6 +130,7 @@ steps:
       java_options: java_options
       R: genome_fasta
       V: gatk_select_variants_snp/output
+      missing_values_evaluate_as_failing: missing_values_evaluate_as_failing
       O:
         valueFrom: ${ return inputs.V.nameroot.replace("_raw_snps", "_filtered_snps.vcf"); }
       filters: snp_filters
@@ -133,6 +141,7 @@ steps:
       java_options: java_options
       R: genome_fasta
       V: gatk_select_variants_indels/output
+      missing_values_evaluate_as_failing: missing_values_evaluate_as_failing
       O:
         valueFrom: ${ return inputs.V.nameroot.replace("_raw_indels", "_filtered_indels.vcf"); }
       filters: indel_filters
@@ -214,12 +223,14 @@ steps:
   gatk_haplotypecaller_recal:
     run: ../../tools/gatk/gatk-HaplotypeCaller.cwl
     in:
-      threads: haplotype_threads
+      threads: threads
       R: genome_fasta
       I: bam_recal/output
+      ploidy: ploidy
       ERC: { default: "GVCF" }
       create_output_variant_index: { default: "true" }
+      annotations: annotations
       java_options: java_options
       O:
-        valueFrom: ${ return inputs.I.nameroot + "_variants.g.vcf"; }
+        valueFrom: ${ return inputs.I.nameroot + "_variants.g.vcf.gz"; }
     out: [output]

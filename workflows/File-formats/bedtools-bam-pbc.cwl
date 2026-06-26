@@ -61,18 +61,3 @@ steps:
           text: { default: 'BEGIN{mt=0;m0=0;m1=0;m2=0} ($1==1){m1=m1+1} ($1==2){m2=m2+1} {m0=m0+1} {mt=mt+$1} END{printf "%d\t%d\t%d\t%d\t%f\t%f\t%f\n",mt,m0,m1,m2,m0/mt,m1/m0,m1/m2}' }
         out: [output]
 
-
-
-s:author:
-  - class: s:Person
-    s:identifier: https://orcid.org/0000-0002-4108-5982
-    s:email: mailto:r78v10a07@gmail.com
-    s:name: Roberto Vera Alvarez
-
-
-
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-  - https://schema.org/version/latest/schemaorg-current-http.rdf

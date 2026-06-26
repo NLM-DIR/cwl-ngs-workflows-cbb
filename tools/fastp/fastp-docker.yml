@@ -1,0 +1,2 @@
+class: DockerRequirement
+dockerPull: quay.io/biocontainers/fastp:1.0.1--heae3180_0

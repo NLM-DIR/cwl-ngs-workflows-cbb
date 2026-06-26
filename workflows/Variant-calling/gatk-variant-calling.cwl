@@ -14,6 +14,7 @@ requirements:
   ScatterFeatureRequirement: {}
 
 inputs:
+  R: string
   reads: File[]
   genome_fasta:
     type: File
@@ -47,11 +48,11 @@ outputs:
   snp_out:
     outputSource: gatk_select_variants_snp_filtered_recal/output
     type: File
-    secondaryFiles: [.idx]
+    secondaryFiles: [.tbi]
   indels_out:
     outputSource: gatk_select_variants_indels_filtered_recal/output
     type: File
-    secondaryFiles: [.idx]
+    secondaryFiles: [.tbi]
   snp_vep_out:
     outputSource: snp_vep/output
     type: File
@@ -68,6 +69,7 @@ steps:
   alignment:
     run: bwa-alignment-sort.cwl
     in:
+      R: R
       reads: reads
       genome_index: genome_index
       genome_prefix: genome_prefix
@@ -262,7 +264,6 @@ steps:
       O:
         valueFrom: ${ var name = inputs.I[0].nameroot; return name.substring(0, name.indexOf("_recal_reads")) + "_raw_variants_recal.vcf"; }
     out: [output]
-
   gatk_select_variants_snp_recal:
     run: ../../tools/gatk/gatk-SelectVariants.cwl
     in:
