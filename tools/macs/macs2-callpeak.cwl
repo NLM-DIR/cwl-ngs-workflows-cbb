@@ -157,6 +157,14 @@ inputs:
       prefix: --outdir
     doc: |
       MACS2 will save all output files into speficied folder for this option
+  keep_dup:
+    type: string?
+    inputBinding:
+      position: 2
+      prefix: --keep-dup
+    doc: |
+      It controls the behavior towards duplicate tags at the exact same location
+
 
 outputs:
   lambda:
@@ -194,15 +202,3 @@ outputs:
 
 
 baseCommand: ["macs2","callpeak"]
-
-$namespaces:
-  s: http://schema.org/
-
-s:author:
-  - class: s:Person
-    s:identifier: https://orcid.org/0000-0002-4108-5982
-    s:email: mailto:r78v10a07@gmail.com
-    s:name: Roberto Vera Alvarez
-
-$schemas:
-  - https://schema.org/version/latest/schemaorg-current-http.rdf

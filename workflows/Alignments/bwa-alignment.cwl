@@ -15,12 +15,14 @@ inputs:
   genome_index: Directory
   genome_prefix: string
   threads: int?
-  bwa_k: in?
+  bwa_k: int?
   bwa_c: int?
+  bwa_T: int?
+  bwa_R: string?
 
 outputs:
   bam_out:
-    outputSource: samtools_view/output
+    outputSource: bam_index/out_sam
     type: File
   bam_flagstat_out:
     outputSource: samtools_flagstat/out_stdout
@@ -35,12 +37,15 @@ steps:
     label: bwa-mem
     in:
       M: {default: true}
+      Y: {default: true}
       index: genome_index
       reads: reads
       prefix: genome_prefix
       t: threads
       k: bwa_k
       c: bwa_c
+      T: bwa_T
+      R: bwa_R
     out: [out_stdout]
   samtools_view:
     run: ../../tools/samtools/samtools-view.cwl
@@ -52,11 +57,17 @@ steps:
         valueFrom: '${ return inputs.input.nameroot + ".bam";}'
       threads: threads
     out: [output]
+  bam_index:
+    run: ../../tools/samtools/samtools-index.cwl
+    label: Samtools-index
+    in:
+      in_bam: samtools_view/output
+    out: [out_sam]
   samtools_flagstat:
     run: ../../tools/samtools/samtools-flagstat.cwl
     label: Samtools-flagstat
     in:
-      in_bam: samtools_view/output
+      in_bam: bam_index/out_sam
       stdout:
         valueFrom: '${ return inputs.in_bam.nameroot + ".flagstat";}'
     out: [out_stdout]
@@ -64,19 +75,7 @@ steps:
     run: ../../tools/samtools/samtools-stats.cwl
     label: Samtools-stats
     in:
-      in_bam: samtools_view/output
+      in_bam: bam_index/out_sam
       stdout:
         valueFrom: '${ return inputs.in_bam.nameroot + ".stats";}'
     out: [out_stdout]
-
-$namespaces:
-  s: http://schema.org/
-
-s:author:
-  - class: s:Person
-    s:identifier: https://orcid.org/0000-0002-4108-5982
-    s:email: mailto:r78v10a07@gmail.com
-    s:name: Roberto Vera Alvarez
-
-$schemas:
-  - https://schema.org/version/latest/schemaorg-current-http.rdf

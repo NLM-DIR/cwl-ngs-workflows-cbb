@@ -1,0 +1,7 @@
+class: SoftwareRequirement
+packages:
+  - package: 'cutadapt'
+    version:
+      - '5.2'
+    specs:
+      - https://anaconda.org/bioconda/cutadapt

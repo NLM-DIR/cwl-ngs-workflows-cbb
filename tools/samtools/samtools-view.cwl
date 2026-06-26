@@ -32,7 +32,7 @@ inputs:
     doc: |
       output in BAM format
   readswithoutbits:
-    type: int?
+    type: string?
     inputBinding:
       position: 1
       prefix: -F
@@ -88,7 +88,7 @@ inputs:
     doc: |
       only include reads with mapping quality >= INT [0]
   readswithbits:
-    type: int?
+    type: string?
     inputBinding:
       position: 1
       prefix: -f
@@ -181,6 +181,21 @@ inputs:
     inputBinding:
       position: 2
       prefix: -o
+  s:
+    type: float?
+    inputBinding:
+      position: 1
+      prefix: -s
+  U:
+    type: File?
+    inputBinding:
+      position: 1
+      prefix: -U
+  H:
+    type: boolean?
+    inputBinding:
+      position: 1
+      prefix: -H
 
 outputs:
   output:
@@ -189,14 +204,3 @@ outputs:
       glob: $(inputs.output_name)
 
 baseCommand: [samtools, view]
-
-$namespaces:
-  s: http://schema.org/
-
-s:author:
-  - class: s:Person
-    s:identifier: https://orcid.org/0000-0002-4108-5982
-    s:email: mailto:r78v10a07@gmail.com
-    s:name: Roberto Vera Alvarez
-$schemas:
-  - https://schema.org/version/latest/schemaorg-current-http.rdf

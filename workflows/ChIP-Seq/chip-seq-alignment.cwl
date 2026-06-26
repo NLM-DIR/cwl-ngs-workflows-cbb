@@ -14,57 +14,51 @@ requirements:
 inputs:
   bwa_k: int?
   bwa_c: int?
+  bwa_T: int?
+  bwa_R: string?
   genome_index: Directory
   genome_prefix: string
-  reads:
-    type: {"type": "array", "items": {"type": "array", "items": "File"}}
+  reads: File[]
   readsquality: int
-  subsample_nreads: int
   threads: int
 
 outputs:
   bam_flagstat_out:
     outputSource: alignment/bam_flagstat_out
-    type: File[]
-  bam_index_out:
+    type: File
+  bam_out:
     outputSource: bam_index/out_sam
-    type: File[]
+    type: File
+    secondaryFiles: [ .bai ]
   bam_stats_out:
     outputSource: alignment/bam_stats_out
-    type: File[]
+    type: File
   bed_file_out:
     outputSource: bamtobed/out_stdout
-    type: File[]
+    type: File
   final_bam_flagstat_out:
     outputSource: final_bam_flagstat/out_stdout
-    type: File[]
+    type: File
   final_bam_out:
     outputSource: final_bam/out_sam
-    type: File[]
+    type: File
   pbc_out:
     outputSource: pbc/out
-    type: File[]
+    type: File
   phantompeakqualtools_output_out:
     outputSource: phantompeakqualtools/output_out
-    type: File[]
+    type: File
   phantompeakqualtools_output_savp:
     outputSource: phantompeakqualtools/output_savp
-    type: File[]?
-  subsample_pseudoreplicate_gzip_out:
-    outputSource: subsample/pseudoreplicate_gzip_out
-    type: {"type": "array", "items": {"type": "array", "items": "File"}}
-  subsample_subsample_out:
-    outputSource: subsample/subsample_out
-    type: File[]
-  subsample_tagalign_out:
-    outputSource: subsample/tagalign_out
-    type: File[]
+    type: File
+  tagalign_out:
+    outputSource: create_tagalign/output
+    type: File
 
 steps:
   alignment:
     run: ../Alignments/bwa-alignment.cwl
     label: bwa alignment workflow for single-end samples
-    scatter: reads
     in:
       reads: reads
       genome_index: genome_index
@@ -72,11 +66,12 @@ steps:
       threads: threads
       bwa_k: bwa_k
       bwa_c: bwa_c
+      bwa_T: bwa_T
+      bwa_R: bwa_R
     out: [bam_out, bam_flagstat_out, bam_stats_out]
   filtered_bam:
     run: ../../tools/samtools/samtools-view.cwl
     label: Samtools-view
-    scatter: input
     in:
       input: alignment/bam_out
       isbam: { default: true }
@@ -88,7 +83,6 @@ steps:
   final_bam:
     run: ../../tools/samtools/samtools-sort.cwl
     label: Samtools-sort
-    scatter: in_bam
     in:
       in_bam: filtered_bam/output
       out_bam:
@@ -98,14 +92,12 @@ steps:
   bam_index:
     run: ../../tools/samtools/samtools-index.cwl
     label: Samtools-index
-    scatter: in_bam
     in:
       in_bam: final_bam/out_sam
     out: [out_sam]
   bamtobed:
     run: ../../tools/bedtools/bedtools-bamtobed.cwl
     label: bedtools-bamtobed
-    scatter: i
     in:
       i: final_bam/out_sam
       stdout:
@@ -114,7 +106,6 @@ steps:
   final_bam_flagstat:
     run: ../../tools/samtools/samtools-flagstat.cwl
     label: Samtools-flagstat
-    scatter: in_bam
     in:
       in_bam: final_bam/out_sam
       stdout:
@@ -125,24 +116,19 @@ steps:
   pbc:
     run: ../File-formats/bedtools-bam-pbc.cwl
     label: Compute library complexity
-    scatter: bed_file
     in:
       bed_file: bamtobed/out_stdout
     out: [out]
-  subsample:
-    run: ../File-formats/subample-pseudoreplicates.cwl
-    label: Subsample BAM file creating a tagAlign and pseudoreplicates
-    scatter: bed_file
+  create_tagalign:
+    run: ../File-formats/create-tagAlign.cwl
     in:
       bed_file: bamtobed/out_stdout
-      nreads: subsample_nreads
-    out: [ pseudoreplicate_gzip_out, subsample_out, tagalign_out ]
+    out: [ output ]
   phantompeakqualtools:
     run: ../../tools/phantompeakqualtools/phantompeakqualtools.cwl
     label: Phantompeakqualtools
-    scatter: c
     in:
-      c: subsample/tagalign_out
+      c: create_tagalign/output
       filtchr: {default: chrM}
       out:
         valueFrom: '${ return inputs.c.nameroot + ".cc.qc";}'
@@ -150,15 +136,3 @@ steps:
       savp:
         valueFrom: '${ return inputs.c.nameroot + ".cc.plot.pdf";}'
     out: [output_out, output_savn, output_savp, output_savr]
-
-$namespaces:
-  s: http://schema.org/
-
-s:author:
-  - class: s:Person
-    s:identifier: https://orcid.org/0000-0002-4108-5982
-    s:email: mailto:r78v10a07@gmail.com
-    s:name: Roberto Vera Alvarez
-
-$schemas:
-  - https://schema.org/version/latest/schemaorg-current-http.rdf

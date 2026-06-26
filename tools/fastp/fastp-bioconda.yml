@@ -1,0 +1,7 @@
+class: SoftwareRequirement
+packages:
+  - package: 'fastp'
+    version:
+      - '1.0.1'
+    specs:
+      - https://anaconda.org/bioconda/fastp

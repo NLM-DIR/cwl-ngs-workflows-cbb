@@ -25,32 +25,52 @@ inputs:
       prefix: '--fasta'
     label: fasta
     doc: 'FASTA only, no qualities'
-  - id: accession
-    type: string
-    inputBinding:
-      position: 2
-    label: accession
-    doc: SRA accession ID
   - id: gzip
     type: boolean?
     inputBinding:
-      position: 0
+      position: 2
       prefix: '--gzip'
   - id: split-files
     type: boolean?
     inputBinding:
-      position: 0
+      position: 3
       prefix: '--split-files'
   - id: X
     type: int?
     inputBinding:
-      position: 0
+      position: 4
       prefix: '-X'
   - id: aligned
     type: boolean?
     inputBinding:
-      position: 0
+      position: 5
       prefix: '--aligned'
+  - id: defline_seq
+    type: string
+    inputBinding:
+      position: 6
+      prefix: '--defline-seq'
+  - id: defline_qual
+    type: string?
+    inputBinding:
+      position: 7
+      prefix: '--defline-qual'
+  - id: read_filter
+    type: string?
+    inputBinding:
+      position: 8
+      prefix: '--read-filter'
+  - id: skip_technical
+    type: boolean?
+    inputBinding:
+      position: 9
+      prefix: '--skip-technical'
+  - id: accession
+    type: string
+    inputBinding:
+      position: 10
+    label: accession
+    doc: SRA accession ID
 outputs:
   - id: output
     type: 'File[]'
@@ -59,15 +79,3 @@ outputs:
 
 baseCommand:
   - fastq-dump
-
-s:author:
-  - class: s:Person
-    s:identifier: https://orcid.org/0000-0002-4108-5982
-    s:email: mailto:r78v10a07@gmail.com
-    s:name: Roberto Vera Alvarez
-
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-  - https://schema.org/version/latest/schemaorg-current-http.rdf

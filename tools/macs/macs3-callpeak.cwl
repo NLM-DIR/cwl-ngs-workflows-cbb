@@ -11,8 +11,8 @@ requirements:
     ramMin: 1024
 
 hints:
-  - $import: macs2-docker.yml
-  - $import: macs2-bioconda.yml
+  - $import: macs3-docker.yml
+  - $import: macs3-bioconda.yml
 
 inputs:
   call-summits:
@@ -180,7 +180,7 @@ outputs:
     outputBinding:
       glob: $(inputs.outdir_name)/$(inputs.n)_cutoff_analysis_inflection.txt
   narrowPeak:
-    type: File
+    type: File?
     outputBinding:
       glob: $(inputs.outdir_name)/$(inputs.n)_peaks.narrowPeak
   xls:
@@ -188,21 +188,17 @@ outputs:
     outputBinding:
       glob: $(inputs.outdir_name)/$(inputs.n)_peaks.xls
   bed:
-    type: File
+    type: File?
     outputBinding:
       glob: $(inputs.outdir_name)/$(inputs.n)_summits.bed
+  broadPeak:
+    type: File?
+    outputBinding:
+      glob: $(inputs.outdir_name)/$(inputs.n)_peaks.broadPeak
+  gappedPeak:
+    type: File?
+    outputBinding:
+      glob: $(inputs.outdir_name)/$(inputs.n)_peaks.gappedPeak
 
 
-baseCommand: ["macs2","callpeak"]
-
-$namespaces:
-  s: http://schema.org/
-
-s:author:
-  - class: s:Person
-    s:identifier: https://orcid.org/0000-0002-4108-5982
-    s:email: mailto:r78v10a07@gmail.com
-    s:name: Roberto Vera Alvarez
-
-$schemas:
-  - https://schema.org/version/latest/schemaorg-current-http.rdf
+baseCommand: ["macs3","callpeak"]

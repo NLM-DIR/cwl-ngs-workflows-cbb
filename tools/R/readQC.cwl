@@ -25,8 +25,19 @@ requirements:
       - entryname: readQC.R
         entry: |
           args = commandArgs(trailingOnly=TRUE)
-          library("ggplot2")
-          library(dplyr)
+          if (!require("ggplot2", quietly = TRUE)) {
+            message("ggplot2 not found. Installing...")
+            install.packages("ggplot2", repos = "https://cloud.r-project.org")
+          }
+          if (!require("dplyr", quietly = TRUE)) {
+            message("dplyr not found. Installing...")
+            install.packages("dplyr", repos = "https://cloud.r-project.org")
+          }
+          suppressPackageStartupMessages({
+            library(ggplot2)
+            library(dplyr)
+          })
+          
           tags=args[1]
           if(!dir.exists(tags)) {
             stop("ERROR: Tag folder not found")
@@ -113,15 +124,3 @@ outputs:
       glob: "*.pdf"
 
 baseCommand: ["Rscript", "--vanilla", "readQC.R"]
-
-$namespaces:
-  s: http://schema.org/
-
-s:author:
-  - class: s:Person
-    s:identifier: https://orcid.org/0000-0002-4108-5982
-    s:email: mailto:r78v10a07@gmail.com
-    s:name: Roberto Vera Alvarez
-
-$schemas:
-  - https://schema.org/version/latest/schemaorg-current-http.rdf

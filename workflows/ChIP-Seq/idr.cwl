@@ -13,6 +13,7 @@ requirements:
 inputs:
   narrowpeaks:
     type: {"type": "array", "items": {"type": "array", "items": "File"}}
+  rank: string
   soft_idr_threshold: float?
   input_file_type: string
   genome_fasta: File
@@ -45,7 +46,7 @@ steps:
       output_file: output_file
       peak_list: pooled_peak_list
       plot: { default: true }
-      rank: { default: signal.value }
+      rank: rank
       samples: narrowpeaks
       soft_idr_threshold: soft_idr_threshold
       use_best_multisummit_IDR: {default: true}
@@ -77,16 +78,3 @@ steps:
       o:
         valueFrom: '${ return inputs.input.basename + "_annotation.txt";}'
     out: [annStats_out, output]
-
-
-$namespaces:
-  s: http://schema.org/
-
-s:author:
-  - class: s:Person
-    s:identifier: https://orcid.org/0000-0002-4108-5982
-    s:email: mailto:r78v10a07@gmail.com
-    s:name: Roberto Vera Alvarez
-
-$schemas:
-  - https://schema.org/version/latest/schemaorg-current-http.rdf

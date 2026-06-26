@@ -16,6 +16,7 @@ inputs:
   genome_index: Directory
   genome_prefix: string
   threads: int
+  R: string
 
 outputs:
   sorted_indexed_bam:
@@ -40,24 +41,7 @@ steps:
       t: threads
       K: { default: 100000000}
       Y: { default: true}
-      R:
-        valueFrom: |
-          ${
-            var sample = inputs.reads[0].nameroot;
-            if (sample.endsWith(".fastq")){
-              sample = sample.replace(".fastq", "");
-            }else if (sample.endsWith(".fq")){
-              sample = sample.replace(".fq", "");
-            }
-            if (sample.endsWith("_1") || sample.endsWith("_2")){
-              sample = sample.slice(0, -2);
-            }else if (sample.includes("_R1_")){
-              sample = sample.substring(1, sample.indexOf("_R1_"))
-            }else if (sample.includes("_R2_")){
-              sample = sample.substring(0, sample.indexOf("_R2_"))
-            }
-            return "@RG\\tID:" + sample + "\\tLB:" + sample + "\\tPL:ILLUMINA\\tPM:HISEQ\\tSM:" + sample;
-          }
+      R: R
     out: [out_stdout]
   sam_to_bam:
     run: ../../tools/samtools/samtools-view.cwl
@@ -91,18 +75,4 @@ steps:
       bam: sam_to_bam/output
       threads: threads
     out: [sorted_indexed_bam]
-
-
-$namespaces:
-  s: http://schema.org/
-
-$schemas:
-  - https://schema.org/version/latest/schemaorg-current-http.rdf
-
-s:author:
-  - class: s:Person
-    s:identifier: https://orcid.org/0000-0002-4108-5982
-    s:email: mailto:r78v10a07@gmail.com
-    s:name: Roberto Vera Alvarez
-
 

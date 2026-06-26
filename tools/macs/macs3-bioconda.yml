@@ -4,4 +4,4 @@ packages:
     version:
       - '3.0.3'
     specs:
-      - https://anaconda.org/bioconda/macs2
+      - https://anaconda.org/bioconda/macs3
