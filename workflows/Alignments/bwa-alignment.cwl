@@ -57,11 +57,20 @@ steps:
         valueFrom: '${ return inputs.input.nameroot + ".bam";}'
       threads: threads
     out: [output]
+  samtools_sort:
+    run: ../../tools/samtools/samtools-sort.cwl
+    label: Samtools-sort
+    in:
+      in_bam: samtools_view/output
+      out_bam:
+        valueFrom: ${ return inputs.in_bam.nameroot + "_sorted.bam"; }
+      threads: threads
+    out: [out_sam]
   bam_index:
     run: ../../tools/samtools/samtools-index.cwl
     label: Samtools-index
     in:
-      in_bam: samtools_view/output
+      in_bam: samtools_sort/out_sam
     out: [out_sam]
   samtools_flagstat:
     run: ../../tools/samtools/samtools-flagstat.cwl

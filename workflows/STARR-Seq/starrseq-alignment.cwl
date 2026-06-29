@@ -144,21 +144,9 @@ steps:
     out: [bam_out, bam_flagstat_out, bam_stats_out]
 
   # -------------------------------------------------------------------
-  # Coordinate-sort each aligned BAM (scattered)
-  # -------------------------------------------------------------------
-  sort_bam:
-    run: ../../tools/samtools/samtools-sort.cwl
-    label: Samtools-sort
-    scatter: in_bam
-    in:
-      in_bam: alignment/bam_out
-      out_bam:
-        valueFrom: ${ return inputs.in_bam.nameroot + "_sorted.bam"; }
-      threads: threads
-    out: [out_sam]
-
-  # -------------------------------------------------------------------
   # Merge sorted BAMs — only runs when there is more than one run.
+  # bwa-alignment.cwl already coordinate-sorts each BAM internally,
+  # so no additional sort step is needed here.
   # When skipped (single run), output is null (File?).
   # -------------------------------------------------------------------
   merge_bams:
@@ -166,8 +154,7 @@ steps:
     label: Samtools-merge
     when: $(inputs.in_bam.length > 1)
     in:
-      threads: threads
-      in_bam: sort_bam/out_sam
+      in_bam: alignment/bam_out
       out_bam:
         source: sample_name
         valueFrom: $(self + "_merged.bam")
@@ -176,7 +163,7 @@ steps:
   # -------------------------------------------------------------------
   # Pick the BAM to deduplicate:
   #   multiple runs → merged BAM
-  #   single run    → the one sorted BAM from sort_bam
+  #   single run    → the one sorted BAM from alignment
   # -------------------------------------------------------------------
   pick_bam:
     run:
@@ -194,7 +181,7 @@ steps:
         }
     in:
       merged: merge_bams/out_sam
-      sorted: sort_bam/out_sam
+      sorted: alignment/bam_out
     out: [bam]
 
   # -------------------------------------------------------------------
