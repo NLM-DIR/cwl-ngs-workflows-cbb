@@ -14,14 +14,21 @@ hints:
   - $import: samtools-bioconda.yml
 
 inputs:
+  threads:
+    type: int?
+    inputBinding:
+      position: 1
+      prefix: -@
+    doc: |
+      number of BAM compression threads [0]
   out_bam:
     type: string
     inputBinding:
-      position: 1
+      position: 2
   in_bam:
     type: File[]
     inputBinding:
-      position: 2
+      position: 3
       separate: true
       itemSeparator: " "
       shellQuote: false

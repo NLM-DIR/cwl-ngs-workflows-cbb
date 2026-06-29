@@ -166,6 +166,7 @@ steps:
     label: Samtools-merge
     when: $(inputs.in_bam.length > 1)
     in:
+      threads: threads
       in_bam: sort_bam/out_sam
       out_bam:
         source: sample_name
